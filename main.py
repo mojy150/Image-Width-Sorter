@@ -1,5 +1,8 @@
 from customtkinter import *
+import os
 from tkinterdnd2 import TkinterDnD, DND_FILES
+
+image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp")
 
 def on_drop(event):
     # event.data is a raw Tcl list; use splitlist to handle multiple/spaced paths, see note above
@@ -32,7 +35,11 @@ def start_project_func():
     text_content = link_box.get("0.0", "end")  # گرفتن کل متن از ابتدا تا انتها
     lines = text_content.split("\n")
 
-    print(lines)
+    for line in lines:
+        if line.strip() != "":
+            image_files = [f for f in os.listdir(line) if f.lower().endswith(image_extensions)]
+    for i in image_files:
+        print(i)
 
 button = CTkButton(window,text="start",
                 corner_radius=10,
