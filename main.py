@@ -1,5 +1,6 @@
 from customtkinter import *
 import os
+import shutil
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
 image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp")
@@ -38,8 +39,20 @@ def start_project_func():
     for line in lines:
         if line.strip() != "":
             image_files = [f for f in os.listdir(line) if f.lower().endswith(image_extensions)]
-    for i in image_files:
-        print(i)
+            for image_name in image_files:
+                
+                # ساخت مسیر پوشه جدید با اسم "1" داخل destination_folder
+                new_folder = os.path.join(line, "1")
+
+                # ساخت پوشه (اگه از قبل وجود نداشته باشه)
+                os.makedirs(new_folder, exist_ok=True)
+
+                # مسیر کامل مبدا و مقصد
+                source_path = os.path.join(line, image_name)
+                destination_path = os.path.join(new_folder, image_name)
+
+                # انتقال فایل
+                shutil.move(source_path, destination_path)
 
 button = CTkButton(window,text="start",
                 corner_radius=10,
