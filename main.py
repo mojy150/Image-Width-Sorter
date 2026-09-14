@@ -19,7 +19,7 @@ window.grid_columnconfigure([0], weight=1)
 TkinterDnD.require(window)
 
 drag_drop_input = CTkEntry(window,                          
-                      placeholder_text="Drag a file here...",height=50)  
+                      placeholder_text="⬇️ Drag files here...",height=50)  
 drag_drop_input.grid(row = 0,pady=10,sticky='nsew')
 
 link_box = CTkTextbox(window,)   
@@ -27,5 +27,18 @@ link_box.grid(row = 1,pady=10,sticky='nsew')
 
 drag_drop_input.drop_target_register(DND_FILES)
 drag_drop_input.dnd_bind("<<Drop>>", on_drop)
+
+def start_project_func():
+    text_content = link_box.get("0.0", "end")  # گرفتن کل متن از ابتدا تا انتها
+    lines = text_content.split("\n")
+
+    print(lines)
+
+button = CTkButton(window,text="start",
+                corner_radius=10,
+                height=50,
+                command=start_project_func
+                )
+button.grid(row = 2,pady=10,sticky='nsew')
 
 window.mainloop()
