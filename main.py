@@ -2,6 +2,7 @@ from customtkinter import *
 import os
 import shutil
 from tkinterdnd2 import TkinterDnD, DND_FILES
+from PIL import Image
 
 image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp")
 
@@ -11,6 +12,20 @@ def on_drop(event):
     # link_box.delete(0, "end")
     for folder in folders:
         link_box.insert("end", folder + "\n")
+
+def move_img(line,image_name,folder_name):
+    # ساخت مسیر پوشه جدید با اسم "1" داخل destination_folder
+    new_folder = os.path.join(line, str(folder_name))
+
+    # ساخت پوشه (اگه از قبل وجود نداشته باشه)
+    os.makedirs(new_folder, exist_ok=True)
+
+    # مسیر کامل مبدا و مقصد
+    source_path = os.path.join(line, image_name)
+    destination_path = os.path.join(new_folder, image_name)
+
+    # انتقال فایل
+    shutil.move(source_path, destination_path)
 
 window = CTk()                                             
 window.geometry("500x700")                                 
@@ -33,26 +48,22 @@ drag_drop_input.drop_target_register(DND_FILES)
 drag_drop_input.dnd_bind("<<Drop>>", on_drop)
 
 def start_project_func():
-    text_content = link_box.get("0.0", "end")  # گرفتن کل متن از ابتدا تا انتها
+    text_content = link_box.get("0.0", "end")
     lines = text_content.split("\n")
 
     for line in lines:
-        if line.strip() != "":
+        line = line.strip()
+        if line != "":
             image_files = [f for f in os.listdir(line) if f.lower().endswith(image_extensions)]
             for image_name in image_files:
+                with Image.open(os.path.join(line, image_name)) as img:
+                    width = img.width
+
+                if width > 1800:
+                    move_img(line, image_name, 2)
+                else:
+                    move_img(line, image_name, 1)
                 
-                # ساخت مسیر پوشه جدید با اسم "1" داخل destination_folder
-                new_folder = os.path.join(line, "1")
-
-                # ساخت پوشه (اگه از قبل وجود نداشته باشه)
-                os.makedirs(new_folder, exist_ok=True)
-
-                # مسیر کامل مبدا و مقصد
-                source_path = os.path.join(line, image_name)
-                destination_path = os.path.join(new_folder, image_name)
-
-                # انتقال فایل
-                shutil.move(source_path, destination_path)
 
 button = CTkButton(window,text="start",
                 corner_radius=10,
