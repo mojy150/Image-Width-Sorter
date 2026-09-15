@@ -49,6 +49,7 @@ drag_drop_input.drop_target_register(DND_FILES)
 drag_drop_input.dnd_bind("<<Drop>>", on_drop)
 
 def start_project_func():
+    window.configure(state="disabled")
     for widget in result_frame.winfo_children():
         widget.destroy()
     text_content = link_box.get("0.0", "end")
@@ -69,17 +70,24 @@ def start_project_func():
                         move_img(line, image_name, 1)
                 if image_files != []:
                     text_lbl = "[  ✅ Successful ] "+line
-                    lbl = CTkLabel(result_frame,text=text_lbl)
-                    lbl.grid(pady = 1)
+                    lbl = CTkLabel(result_frame,
+                    text=text_lbl,
+                    anchor="w",)
+                    lbl.grid(pady = 1,sticky='w')
                 else:
                     text_lbl = "[🔍 img not found] "+line
-                    lbl = CTkLabel(result_frame,text=text_lbl)
-                    lbl.grid(pady = 1)
+                    lbl = CTkLabel(result_frame,
+                    text=text_lbl,
+                    anchor="w",)
+                    lbl.grid(pady = 1,sticky='w')
             except:
                 text_lbl = "[❌ Unsuccessful ] "+line
-                lbl = CTkLabel(result_frame,text=text_lbl)
-                lbl.grid(pady = 1)
+                lbl = CTkLabel(result_frame,
+                text=text_lbl,
+                anchor="w",)
+                lbl.grid(pady = 1,sticky='w')
     link_box.delete(0.0,END)
+    window.configure(state="normal")
                 
 
 button = CTkButton(window,text="start",
