@@ -5,6 +5,7 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 from PIL import Image
 
 image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp")
+width_sort = 1800
 
 def on_drop(event):
     # event.data is a raw Tcl list; use splitlist to handle multiple/spaced paths, see note above
@@ -28,7 +29,7 @@ def move_img(line,image_name,folder_name):
     shutil.move(source_path, destination_path)
 
 window = CTk()                                             
-window.geometry("500x700")                                 
+window.geometry("550x600")                                 
 window.title("Image Width Sorter")                               
 
 window.grid_rowconfigure([0,1,2,3,4], weight=0)
@@ -38,7 +39,7 @@ window.grid_columnconfigure([0], weight=1)
 TkinterDnD.require(window)
 
 drag_drop_input = CTkEntry(window,                          
-                      placeholder_text="⬇️ Drag files here...",height=50)  
+                      placeholder_text="⬇️ Drag files here...",height=70)  
 drag_drop_input.grid(row = 0,pady=10,sticky='nsew')
 
 link_box = CTkTextbox(window,)   
@@ -48,21 +49,37 @@ drag_drop_input.drop_target_register(DND_FILES)
 drag_drop_input.dnd_bind("<<Drop>>", on_drop)
 
 def start_project_func():
+    for widget in result_frame.winfo_children():
+        widget.destroy()
     text_content = link_box.get("0.0", "end")
     lines = text_content.split("\n")
 
     for line in lines:
         line = line.strip()
         if line != "":
-            image_files = [f for f in os.listdir(line) if f.lower().endswith(image_extensions)]
-            for image_name in image_files:
-                with Image.open(os.path.join(line, image_name)) as img:
-                    width = img.width
+            try:
+                image_files = [f for f in os.listdir(line) if f.lower().endswith(image_extensions)]
+                for image_name in image_files:
+                    with Image.open(os.path.join(line, image_name)) as img:
+                        width = img.width
 
-                if width > 1800:
-                    move_img(line, image_name, 2)
+                    if width > width_sort:
+                        move_img(line, image_name, 2)
+                    else:
+                        move_img(line, image_name, 1)
+                if image_files != []:
+                    text_lbl = "[  ✅ Successful ] "+line
+                    lbl = CTkLabel(result_frame,text=text_lbl)
+                    lbl.grid(pady = 1)
                 else:
-                    move_img(line, image_name, 1)
+                    text_lbl = "[🔍 img not found] "+line
+                    lbl = CTkLabel(result_frame,text=text_lbl)
+                    lbl.grid(pady = 1)
+            except:
+                text_lbl = "[❌ Unsuccessful ] "+line
+                lbl = CTkLabel(result_frame,text=text_lbl)
+                lbl.grid(pady = 1)
+    link_box.delete(0.0,END)
                 
 
 button = CTkButton(window,text="start",
@@ -71,5 +88,8 @@ button = CTkButton(window,text="start",
                 command=start_project_func
                 )
 button.grid(row = 2,pady=10,sticky='nsew')
+
+result_frame = CTkScrollableFrame(window,)
+result_frame.grid(row = 3,pady=10,sticky='nsew')
 
 window.mainloop()
