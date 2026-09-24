@@ -5,7 +5,6 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 from PIL import Image
 
 image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp")
-width_sort = 1800
 
 def on_drop(event):
     # event.data is a raw Tcl list; use splitlist to handle multiple/spaced paths, see note above
@@ -62,12 +61,12 @@ def start_project_func():
                 image_files = [f for f in os.listdir(line) if f.lower().endswith(image_extensions)]
                 for image_name in image_files:
                     with Image.open(os.path.join(line, image_name)) as img:
-                        width = img.width
+                        width, height = img.size
 
-                    if width > width_sort:
-                        move_img(line, image_name, 2)
-                    else:
+                    if width < height:
                         move_img(line, image_name, 1)
+                    else:
+                        move_img(line, image_name, 2)
                 if image_files != []:
                     text_lbl = "[  ✅ Successful ] "+line
                     lbl = CTkLabel(result_frame,
