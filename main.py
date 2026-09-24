@@ -28,7 +28,7 @@ def move_img(line,image_name,folder_name):
     shutil.move(source_path, destination_path)
 
 window = CTk()                                             
-window.geometry("550x600")                                 
+window.geometry("620x600")                                 
 window.title("Image Width Sorter")                               
 
 window.grid_rowconfigure([0,1,2,3,4], weight=0)
@@ -55,6 +55,8 @@ def start_project_func():
     lines = text_content.split("\n")
 
     for line in lines:
+        img_2page = 0
+        img_1page = 0
         line = line.strip()
         if line != "":
             try:
@@ -65,10 +67,18 @@ def start_project_func():
 
                     if width < height:
                         move_img(line, image_name, 1)
+                        img_1page += 1
                     else:
                         move_img(line, image_name, 2)
+                        img_2page +=1
                 if image_files != []:
-                    text_lbl = "[  ✅ Successful ] "+line
+                    if img_1page > 0 and img_2page > 0:
+                        text_lbl = "[  ✅ Successful ] "+line + f" [(1) page:{img_1page} , (2) page:{img_2page}]"
+                    elif img_1page > 0:
+                        text_lbl = "[  ✅ Successful ] "+line + f" [(1) page:{img_1page}]"
+                    else:
+                        text_lbl = "[  ✅ Successful ] "+line + f" [(2) page:{img_2page}]"
+                    
                     lbl = CTkLabel(result_frame,
                     text=text_lbl,
                     anchor="w",)
